@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">real-time-notes</string>
+    <string name="app_title">Real time notes</string>
+    <string name="logo_letter">N</string>
+    <string name="log_in">Log in</string>
+    <string name="continue_as_guest">Continue as Guest</string>
+    <string name="create_account">Create an account</string>
+    <string name="coming_later">Coming later</string>
+    <string name="guest_name">Guest %1$d</string>
+    <string name="default_guest_name">Guest</string>
+    <string name="welcome_guest">Welcome %1$s</string>
+    <string name="join">Join</string>
+    <string name="add_note">+ New note</string>
+    <string name="create_new_note">Create new note</string>
+    <string name="note_name">Note name</string>
+    <string name="note_name_hint">Enter a note name</string>
+    <string name="description_optional">Description (optional)</string>
+    <string name="description_hint">What is this note about?</string>
+    <string name="create_note">Create note</string>
+    <string name="note_name_required">Enter a note name first</string>
+    <string name="sample_note_one">Note 1</string>
+    <string name="sample_description_one">Ideas for the project</string>
+    <string name="sample_note_two">Note 2</string>
+    <string name="sample_description_two">Things to discuss later</string>
 </resources>
