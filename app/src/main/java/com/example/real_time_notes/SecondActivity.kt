@@ -19,6 +19,7 @@ class SecondActivity : AppCompatActivity() {
         const val EXTRA_GUEST_NAME = "com.example.real_time_notes.GUEST_NAME"
         private const val STATE_TITLES = "note_titles"
         private const val STATE_DESCRIPTIONS = "note_descriptions"
+        private const val STATE_ALLOW_OTHERS = "note_allow_others"
     }
 
     private val notes = mutableListOf<Note>()
@@ -30,8 +31,9 @@ class SecondActivity : AppCompatActivity() {
 
         val title = result.data?.getStringExtra(CreateNoteActivity.EXTRA_NOTE_TITLE).orEmpty()
         val description = result.data?.getStringExtra(CreateNoteActivity.EXTRA_NOTE_DESCRIPTION).orEmpty()
+        val allowOthers = result.data?.getBooleanExtra(CreateNoteActivity.EXTRA_NOTE_ALLOW_OTHERS, false) ?: false
         if (title.isNotBlank()) {
-            notes.add(0, Note(title, description))
+            notes.add(0, Note(title, description, allowOthers))
             showNotes()
         }
     }
@@ -51,12 +53,19 @@ class SecondActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.welcome_text).text = getString(R.string.welcome_guest, guestName)
 
         if (savedInstanceState == null) {
-            notes.add(Note(getString(R.string.sample_note_one), getString(R.string.sample_description_one)))
-            notes.add(Note(getString(R.string.sample_note_two), getString(R.string.sample_description_two)))
+            notes.add(Note(getString(R.string.sample_note_one), getString(R.string.sample_description_one), true))
+            notes.add(Note(getString(R.string.sample_note_two), getString(R.string.sample_description_two), true))
         } else {
             val titles = savedInstanceState.getStringArrayList(STATE_TITLES).orEmpty()
             val descriptions = savedInstanceState.getStringArrayList(STATE_DESCRIPTIONS).orEmpty()
-            notes.addAll(titles.zip(descriptions).map { (title, description) -> Note(title, description) })
+            val allowOthers = savedInstanceState.getBooleanArray(STATE_ALLOW_OTHERS) ?: booleanArrayOf()
+            notes.addAll(titles.indices.map { index ->
+                Note(
+                    titles[index],
+                    descriptions.getOrElse(index) { "" },
+                    allowOthers.getOrElse(index) { false }
+                )
+            })
         }
         showNotes()
 
@@ -71,6 +80,7 @@ class SecondActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putStringArrayList(STATE_TITLES, ArrayList(notes.map { it.title }))
         outState.putStringArrayList(STATE_DESCRIPTIONS, ArrayList(notes.map { it.description }))
+        outState.putBooleanArray(STATE_ALLOW_OTHERS, notes.map { it.allowOthers }.toBooleanArray())
         super.onSaveInstanceState(outState)
     }
 
