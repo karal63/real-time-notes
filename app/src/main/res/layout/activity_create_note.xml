@@ -64,6 +64,27 @@
                     android:hint="@string/description_hint"
                     android:inputType="textCapSentences|textMultiLine"
                     android:minLines="3" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:labelFor="@id/allow_others_switch"
+                        android:text="@string/can_others_join" />
+
+                    <Switch
+                        android:id="@+id/allow_others_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/can_others_join"
+                        android:checked="true"/>
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

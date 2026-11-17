@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,7 @@ class CreateNoteActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_NOTE_TITLE = "com.example.real_time_notes.NOTE_TITLE"
         const val EXTRA_NOTE_DESCRIPTION = "com.example.real_time_notes.NOTE_DESCRIPTION"
+        const val EXTRA_NOTE_ALLOW_OTHERS = "com.example.real_time_notes.NOTE_ALLOW_OTHERS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,8 +31,11 @@ class CreateNoteActivity : AppCompatActivity() {
 
         val titleField = findViewById<EditText>(R.id.note_name_input)
         val descriptionField = findViewById<EditText>(R.id.note_description_input)
+        val allowOthersField = findViewById<Switch>(R.id.allow_others_switch)
+
         findViewById<Button>(R.id.create_note_button).setOnClickListener {
             val title = titleField.text.toString().trim()
+
             if (title.isEmpty()) {
                 titleField.error = getString(R.string.note_name_required)
                 return@setOnClickListener
@@ -39,6 +44,7 @@ class CreateNoteActivity : AppCompatActivity() {
             val result = Intent().apply {
                 putExtra(EXTRA_NOTE_TITLE, title)
                 putExtra(EXTRA_NOTE_DESCRIPTION, descriptionField.text.toString().trim())
+                putExtra(EXTRA_NOTE_ALLOW_OTHERS, allowOthersField.isChecked)
             }
             setResult(Activity.RESULT_OK, result)
             finish()
