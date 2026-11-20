@@ -12,11 +12,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 
 class CreateNoteActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     companion object {
         const val EXTRA_NOTE_TITLE = "com.example.real_time_notes.NOTE_TITLE"
         const val EXTRA_NOTE_DESCRIPTION = "com.example.real_time_notes.NOTE_DESCRIPTION"
@@ -34,6 +37,9 @@ class CreateNoteActivity : AppCompatActivity() {
             insets
         }
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
         val titleField = findViewById<EditText>(R.id.note_name_input)
         val descriptionField = findViewById<EditText>(R.id.note_description_input)
         val allowOthersField = findViewById<Switch>(R.id.allow_others_switch)
@@ -49,15 +55,18 @@ class CreateNoteActivity : AppCompatActivity() {
 
             val description = descriptionField.text.toString().trim()
             val allowOthers = allowOthersField.isChecked
+            val ownerId = auth.currentUser?.uid
+
             val note = hashMapOf(
                 "title" to title,
                 "description" to description,
                 "allowOthers" to allowOthers,
+                "ownerId" to ownerId,
                 "createdAt" to FieldValue.serverTimestamp()
             )
 
             createButton.isEnabled = false
-            FirebaseFirestore.getInstance().collection("notes").add(note)
+            db.collection("notes").add(note)
                 .addOnSuccessListener {
                     val result = Intent().apply {
                         putExtra(EXTRA_NOTE_TITLE, title)
