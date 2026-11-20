@@ -46,4 +46,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:35.2.0"))
 
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-auth") {
+        version { strictly("24.0.1") }
+    }
 }

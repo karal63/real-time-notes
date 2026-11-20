@@ -31,10 +31,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val comingLater = { _: android.view.View ->
-            Toast.makeText(this, R.string.coming_later, Toast.LENGTH_SHORT).show()
+        findViewById<Button>(R.id.login_button).setOnClickListener {
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
         }
-        findViewById<Button>(R.id.login_button).setOnClickListener(comingLater)
-        findViewById<Button>(R.id.create_account_button).setOnClickListener(comingLater)
+
+        findViewById<Button>(R.id.create_account_button).setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
