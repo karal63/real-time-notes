@@ -19,6 +19,9 @@
     <string name="create_note">Create note</string>
     <string name="can_others_join">Can others join?</string>
     <string name="note_name_required">Enter a note name first</string>
+    <string name="note_save_failed">Could not save note. Please try again.</string>
+    <string name="note_save_permission_denied">Firestore denied this save. Check the notes collection security rules.</string>
+    <string name="note_save_unavailable">Firestore is unavailable. Check your connection and try again.</string>
     <string name="sample_note_one">Note 1</string>
     <string name="sample_description_one">Ideas for the project</string>
     <string name="sample_note_two">Note 2</string>
