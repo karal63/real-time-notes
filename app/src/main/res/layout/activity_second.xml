@@ -50,14 +50,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="16dp" />
+                android:paddingTop="16dp"
+                android:paddingBottom="88dp" />
         </ScrollView>
-
-        <Button
-            android:id="@+id/add_note_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/add_note" />
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_note_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:contentDescription="@string/create_new_note"
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_24"
+        app:tint="?attr/colorOnPrimaryContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -38,6 +38,8 @@
     <string name="note_save_failed">Could not save note. Please try again.</string>
     <string name="note_save_permission_denied">Firestore denied this save. Check the notes collection security rules.</string>
     <string name="note_save_unavailable">Firestore is unavailable. Check your connection and try again.</string>
+    <string name="sign_in_required">Sign in to view your notes.</string>
+    <string name="notes_load_failed">Could not load notes. Please try again.</string>
     <string name="sample_note_one">Note 1</string>
     <string name="sample_description_one">Ideas for the project</string>
     <string name="sample_note_two">Note 2</string>

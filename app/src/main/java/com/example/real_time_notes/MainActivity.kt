@@ -22,15 +22,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<Button>(R.id.guest_button).setOnClickListener {
-            // This guest name lasts only for the current visit.
-            val guestName = getString(R.string.guest_name, Random.nextInt(1000, 10000))
-            val intent = Intent(this, SecondActivity::class.java).apply {
-                putExtra(SecondActivity.EXTRA_GUEST_NAME, guestName)
-            }
-            startActivity(intent)
-        }
-
         findViewById<Button>(R.id.login_button).setOnClickListener {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
