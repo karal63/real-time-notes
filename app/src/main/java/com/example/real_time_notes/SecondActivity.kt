@@ -16,6 +16,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class SecondActivity : AppCompatActivity() {
 
@@ -49,8 +52,35 @@ class SecondActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.join_button).setOnClickListener {
-            Toast.makeText(this, R.string.coming_later, Toast.LENGTH_SHORT).show()
+            showJoinDialog()
         }
+    }
+
+    private fun showJoinDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_join_note, null)
+        val codeField = dialogView.findViewById<TextInputEditText>(R.id.note_code_input)
+        val codeLayout = dialogView.findViewById<TextInputLayout>(R.id.note_code_layout)
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.join_note_title)
+            .setMessage(R.string.join_note_message)
+            .setView(dialogView)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.join, null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                val code = codeField.text?.toString()?.trim().orEmpty()
+                if (code.isEmpty()) {
+                    codeLayout.error = getString(R.string.note_code_required)
+                } else {
+                    dialog.dismiss()
+                    Toast.makeText(this, R.string.coming_later, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        dialog.show()
     }
 
     override fun onStart() {

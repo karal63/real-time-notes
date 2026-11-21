@@ -40,6 +40,10 @@ class CreateNoteActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        findViewById<Button>(R.id.create_note_back_button).setOnClickListener {
+            finish()
+        }
+
         val titleField = findViewById<EditText>(R.id.note_name_input)
         val descriptionField = findViewById<EditText>(R.id.note_description_input)
         val allowOthersField = findViewById<Switch>(R.id.allow_others_switch)

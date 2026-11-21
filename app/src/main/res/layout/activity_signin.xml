@@ -34,7 +34,8 @@
             android:layout_height="wrap_content"
             android:autofillHints="emailAddress"
             android:inputType="textEmailAddress"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:text="1@gmail.com" />
 
         <TextView
             android:layout_width="match_parent"
@@ -49,7 +50,8 @@
             android:layout_height="wrap_content"
             android:autofillHints="password"
             android:inputType="textPassword"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:text="111111" />
 
         <Button
             android:id="@+id/sign_in_button"
