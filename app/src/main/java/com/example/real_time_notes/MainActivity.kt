@@ -22,19 +22,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<Button>(R.id.guest_button).setOnClickListener {
-            // This guest name lasts only for the current visit.
-            val guestName = getString(R.string.guest_name, Random.nextInt(1000, 10000))
-            val intent = Intent(this, SecondActivity::class.java).apply {
-                putExtra(SecondActivity.EXTRA_GUEST_NAME, guestName)
-            }
+        findViewById<Button>(R.id.login_button).setOnClickListener {
+            val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
 
-        val comingLater = { _: android.view.View ->
-            Toast.makeText(this, R.string.coming_later, Toast.LENGTH_SHORT).show()
+        findViewById<Button>(R.id.create_account_button).setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
         }
-        findViewById<Button>(R.id.login_button).setOnClickListener(comingLater)
-        findViewById<Button>(R.id.create_account_button).setOnClickListener(comingLater)
     }
 }

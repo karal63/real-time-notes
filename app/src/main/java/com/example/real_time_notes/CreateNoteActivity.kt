@@ -1,23 +1,23 @@
 package com.example.real_time_notes
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 
 class CreateNoteActivity : AppCompatActivity() {
-    companion object {
-        const val EXTRA_NOTE_TITLE = "com.example.real_time_notes.NOTE_TITLE"
-        const val EXTRA_NOTE_DESCRIPTION = "com.example.real_time_notes.NOTE_DESCRIPTION"
-        const val EXTRA_NOTE_ALLOW_OTHERS = "com.example.real_time_notes.NOTE_ALLOW_OTHERS"
-    }
-
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,11 +29,19 @@ class CreateNoteActivity : AppCompatActivity() {
             insets
         }
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
+        findViewById<Button>(R.id.create_note_back_button).setOnClickListener {
+            finish()
+        }
+
         val titleField = findViewById<EditText>(R.id.note_name_input)
         val descriptionField = findViewById<EditText>(R.id.note_description_input)
         val allowOthersField = findViewById<Switch>(R.id.allow_others_switch)
+        val createButton = findViewById<Button>(R.id.create_note_button)
 
-        findViewById<Button>(R.id.create_note_button).setOnClickListener {
+        createButton.setOnClickListener {
             val title = titleField.text.toString().trim()
 
             if (title.isEmpty()) {
@@ -41,13 +49,36 @@ class CreateNoteActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val result = Intent().apply {
-                putExtra(EXTRA_NOTE_TITLE, title)
-                putExtra(EXTRA_NOTE_DESCRIPTION, descriptionField.text.toString().trim())
-                putExtra(EXTRA_NOTE_ALLOW_OTHERS, allowOthersField.isChecked)
-            }
-            setResult(Activity.RESULT_OK, result)
-            finish()
+            val description = descriptionField.text.toString().trim()
+            val allowOthers = allowOthersField.isChecked
+            val ownerId = auth.currentUser?.uid
+
+            val note = hashMapOf(
+                "title" to title,
+                "description" to description,
+                "allowOthers" to allowOthers,
+                "ownerId" to ownerId,
+                "createdAt" to FieldValue.serverTimestamp()
+            )
+
+            createButton.isEnabled = false
+            db.collection("notes").add(note)
+                .addOnSuccessListener { document ->
+                    if (isFinishing || isDestroyed) return@addOnSuccessListener
+
+                    startActivity(NoteActivity.createIntent(this, document.id, title))
+                    finish()
+                }
+                .addOnFailureListener { error ->
+                    createButton.isEnabled = true
+                    Log.e("CreateNoteActivity", "Failed to save note", error)
+                    val message = when ((error as? FirebaseFirestoreException)?.code) {
+                        FirebaseFirestoreException.Code.PERMISSION_DENIED -> R.string.note_save_permission_denied
+                        FirebaseFirestoreException.Code.UNAVAILABLE -> R.string.note_save_unavailable
+                        else -> R.string.note_save_failed
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                }
         }
     }
 }

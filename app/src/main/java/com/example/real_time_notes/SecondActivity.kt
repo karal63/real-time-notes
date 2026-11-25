@@ -1,47 +1,41 @@
 package com.example.real_time_notes
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class SecondActivity : AppCompatActivity() {
+
+    private lateinit var db: FirebaseFirestore
+    private var notesListener: ListenerRegistration? = null
+
     companion object {
         const val EXTRA_GUEST_NAME = "com.example.real_time_notes.GUEST_NAME"
-        private const val STATE_TITLES = "note_titles"
-        private const val STATE_DESCRIPTIONS = "note_descriptions"
-        private const val STATE_ALLOW_OTHERS = "note_allow_others"
     }
 
     private val notes = mutableListOf<Note>()
-
-    private val createNoteLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
-
-        val title = result.data?.getStringExtra(CreateNoteActivity.EXTRA_NOTE_TITLE).orEmpty()
-        val description = result.data?.getStringExtra(CreateNoteActivity.EXTRA_NOTE_DESCRIPTION).orEmpty()
-        val allowOthers = result.data?.getBooleanExtra(CreateNoteActivity.EXTRA_NOTE_ALLOW_OTHERS, false) ?: false
-        if (title.isNotBlank()) {
-            notes.add(0, Note(title, description, allowOthers))
-            showNotes()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_second)
+        db = FirebaseFirestore.getInstance()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -52,36 +46,82 @@ class SecondActivity : AppCompatActivity() {
         val guestName = intent.getStringExtra(EXTRA_GUEST_NAME) ?: getString(R.string.default_guest_name)
         findViewById<TextView>(R.id.welcome_text).text = getString(R.string.welcome_guest, guestName)
 
-        if (savedInstanceState == null) {
-            notes.add(Note(getString(R.string.sample_note_one), getString(R.string.sample_description_one), true))
-            notes.add(Note(getString(R.string.sample_note_two), getString(R.string.sample_description_two), true))
-        } else {
-            val titles = savedInstanceState.getStringArrayList(STATE_TITLES).orEmpty()
-            val descriptions = savedInstanceState.getStringArrayList(STATE_DESCRIPTIONS).orEmpty()
-            val allowOthers = savedInstanceState.getBooleanArray(STATE_ALLOW_OTHERS) ?: booleanArrayOf()
-            notes.addAll(titles.indices.map { index ->
-                Note(
-                    titles[index],
-                    descriptions.getOrElse(index) { "" },
-                    allowOthers.getOrElse(index) { false }
-                )
-            })
+        findViewById<FloatingActionButton>(R.id.add_note_button).setOnClickListener {
+            val intent = Intent(this, CreateNoteActivity::class.java)
+            startActivity(intent)
         }
-        showNotes()
 
-        findViewById<Button>(R.id.add_note_button).setOnClickListener {
-            createNoteLauncher.launch(Intent(this, CreateNoteActivity::class.java))
-        }
         findViewById<Button>(R.id.join_button).setOnClickListener {
-            Toast.makeText(this, R.string.coming_later, Toast.LENGTH_SHORT).show()
+            showJoinDialog()
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putStringArrayList(STATE_TITLES, ArrayList(notes.map { it.title }))
-        outState.putStringArrayList(STATE_DESCRIPTIONS, ArrayList(notes.map { it.description }))
-        outState.putBooleanArray(STATE_ALLOW_OTHERS, notes.map { it.allowOthers }.toBooleanArray())
-        super.onSaveInstanceState(outState)
+    private fun showJoinDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_join_note, null)
+        val codeField = dialogView.findViewById<TextInputEditText>(R.id.note_code_input)
+        val codeLayout = dialogView.findViewById<TextInputLayout>(R.id.note_code_layout)
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.join_note_title)
+            .setMessage(R.string.join_note_message)
+            .setView(dialogView)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.join, null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                val code = codeField.text?.toString()?.trim().orEmpty()
+                if (code.isEmpty()) {
+                    codeLayout.error = getString(R.string.note_code_required)
+                } else {
+                    dialog.dismiss()
+                    Toast.makeText(this, R.string.coming_later, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        dialog.show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(this, R.string.sign_in_required, Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
+        notesListener = db.collection("notes")
+            .whereEqualTo("ownerId", userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("SecondActivity", "Failed to load notes", error)
+                    Toast.makeText(this, R.string.notes_load_failed, Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
+                }
+
+                if (snapshot == null) return@addSnapshotListener
+
+                notes.clear()
+                notes.addAll(snapshot.documents.map { document ->
+                    Note(
+                        id = document.id,
+                        title = document.getString("title").orEmpty(),
+                        description = document.getString("description").orEmpty(),
+                        allowOthers = document.getBoolean("allowOthers") ?: false,
+                        ownerId = document.getString("ownerId").orEmpty()
+                    )
+                })
+                showNotes()
+            }
+    }
+
+    override fun onStop() {
+        notesListener?.remove()
+        notesListener = null
+        super.onStop()
     }
 
     private fun showNotes() {
@@ -96,6 +136,10 @@ class SecondActivity : AppCompatActivity() {
                 visibility = if (note.description.isBlank()) View.GONE else View.VISIBLE
             }
             container.addView(card)
+
+            card.setOnClickListener {
+                startActivity(NoteActivity.createIntent(this, note.id, note.title))
+            }
         }
     }
 }
