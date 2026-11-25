@@ -3,10 +3,9 @@ package com.example.real_time_notes
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.CompoundButton
 import android.widget.EditText
-import android.widget.Switch
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,7 +19,7 @@ class CreateNoteActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableNotesEdgeToEdge()
         setContentView(R.layout.activity_create_note)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
@@ -38,7 +37,7 @@ class CreateNoteActivity : AppCompatActivity() {
 
         val titleField = findViewById<EditText>(R.id.note_name_input)
         val descriptionField = findViewById<EditText>(R.id.note_description_input)
-        val allowOthersField = findViewById<Switch>(R.id.allow_others_switch)
+        val allowOthersField = findViewById<CompoundButton>(R.id.allow_others_switch)
         val createButton = findViewById<Button>(R.id.create_note_button)
 
         createButton.setOnClickListener {

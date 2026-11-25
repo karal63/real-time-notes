@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+
+    <path
+        android:fillColor="@color/notes_accent_container"
+        android:pathData="M22,0 H58 A22,22 0,0 1,80 22 V58 A22,22 0,0 1,58 80 H22 A22,22 0,0 1,0 58 V22 A22,22 0,0 1,22 0 Z" />
+
+    <path
+        android:pathData="M32,23 H51 A4,4 0,0 1,55 27 V53 A4,4 0,0 1,51 57 H32 A5,5 0,0 1,27 52 V28 A5,5 0,0 1,32 23 Z M35,23 V57 M41,34 H48 M41,41 H48"
+        android:strokeColor="@color/notes_accent"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="2.5" />
+</vector>

@@ -20,6 +20,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -27,13 +28,15 @@
                 android:id="@+id/welcome_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:textSize="22sp"
-                android:textStyle="bold"
+                android:accessibilityHeading="true"
+                android:textAppearance="@style/TextAppearance.Realtimenotes.Heading"
                 tools:text="Welcome Guest 4821" />
 
             <Button
                 android:id="@+id/join_button"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/join" />
@@ -62,10 +65,10 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:contentDescription="@string/create_new_note"
-        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_24"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorOnPrimary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
