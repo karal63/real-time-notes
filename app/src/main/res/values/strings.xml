@@ -44,6 +44,14 @@
     <string name="note_save_unavailable">Firestore is unavailable. Check your connection and try again.</string>
     <string name="sign_in_required">Sign in to view your notes.</string>
     <string name="notes_load_failed">Could not load notes. Please try again.</string>
+    <string name="untitled_note">Untitled note</string>
+    <string name="note_editor_hint">Start writing…</string>
+    <string name="note_editor_save">Save</string>
+    <string name="note_editor_saved">Note saved</string>
+    <string name="note_editor_load_failed">Could not open this note.</string>
+    <string name="note_editor_retry">Retry</string>
+    <string name="note_editor_unsaved">Discard unsaved changes?</string>
+    <string name="note_editor_discard">Discard</string>
     <string name="sample_note_one">Note 1</string>
     <string name="sample_description_one">Ideas for the project</string>
     <string name="sample_note_two">Note 2</string>

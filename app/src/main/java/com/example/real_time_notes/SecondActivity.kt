@@ -136,6 +136,10 @@ class SecondActivity : AppCompatActivity() {
                 visibility = if (note.description.isBlank()) View.GONE else View.VISIBLE
             }
             container.addView(card)
+
+            card.setOnClickListener {
+                startActivity(NoteActivity.createIntent(this, note.id, note.title))
+            }
         }
     }
 }

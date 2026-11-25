@@ -1,7 +1,5 @@
 package com.example.real_time_notes
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -20,12 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 class CreateNoteActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-    companion object {
-        const val EXTRA_NOTE_TITLE = "com.example.real_time_notes.NOTE_TITLE"
-        const val EXTRA_NOTE_DESCRIPTION = "com.example.real_time_notes.NOTE_DESCRIPTION"
-        const val EXTRA_NOTE_ALLOW_OTHERS = "com.example.real_time_notes.NOTE_ALLOW_OTHERS"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -71,13 +63,10 @@ class CreateNoteActivity : AppCompatActivity() {
 
             createButton.isEnabled = false
             db.collection("notes").add(note)
-                .addOnSuccessListener {
-                    val result = Intent().apply {
-                        putExtra(EXTRA_NOTE_TITLE, title)
-                        putExtra(EXTRA_NOTE_DESCRIPTION, description)
-                        putExtra(EXTRA_NOTE_ALLOW_OTHERS, allowOthers)
-                    }
-                    setResult(Activity.RESULT_OK, result)
+                .addOnSuccessListener { document ->
+                    if (isFinishing || isDestroyed) return@addOnSuccessListener
+
+                    startActivity(NoteActivity.createIntent(this, document.id, title))
                     finish()
                 }
                 .addOnFailureListener { error ->
