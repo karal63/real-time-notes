@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -45,10 +46,11 @@ class SecondActivity : AppCompatActivity() {
         val accountName = intent.getStringExtra(EXTRA_GUEST_NAME) ?: getString(R.string.default_guest_name)
         findViewById<TextView>(R.id.account_name).text = accountName
 
-        findViewById<FloatingActionButton>(R.id.add_note_button).setOnClickListener {
-            val intent = Intent(this, CreateNoteActivity::class.java)
-            startActivity(intent)
+        val createNote = View.OnClickListener {
+            startActivity(Intent(this, CreateNoteActivity::class.java))
         }
+        findViewById<FloatingActionButton>(R.id.add_note_button).setOnClickListener(createNote)
+        findViewById<Button>(R.id.empty_create_note_button).setOnClickListener(createNote)
 
         findViewById<Button>(R.id.join_button).setOnClickListener {
             showJoinDialog()
@@ -126,14 +128,23 @@ class SecondActivity : AppCompatActivity() {
     private fun showNotes() {
         val container = findViewById<LinearLayout>(R.id.notes_container)
         container.removeAllViews()
+        val noteCount = notes.size
+        findViewById<TextView>(R.id.notes_count).apply {
+            isVisible = noteCount > 0
+            text = resources.getQuantityString(R.plurals.notes_count, noteCount, noteCount)
+        }
+        findViewById<View>(R.id.notes_empty).isVisible = notes.isEmpty()
+        findViewById<FloatingActionButton>(R.id.add_note_button).isVisible = notes.isNotEmpty()
 
         for (note in notes) {
             val card = layoutInflater.inflate(R.layout.item_note, container, false)
-            card.findViewById<TextView>(R.id.note_title).text = note.title
+            card.findViewById<TextView>(R.id.note_title).text =
+                note.title.ifBlank { getString(R.string.untitled_note) }
             card.findViewById<TextView>(R.id.note_description).apply {
                 text = note.description
-                visibility = if (note.description.isBlank()) View.GONE else View.VISIBLE
+                isVisible = note.description.isNotBlank()
             }
+            card.findViewById<View>(R.id.note_private_label).isVisible = !note.isPublic
             container.addView(card)
 
             card.setOnClickListener {

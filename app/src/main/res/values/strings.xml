@@ -43,6 +43,13 @@
     <string name="note_save_unavailable">Firestore is unavailable. Check your connection and try again.</string>
     <string name="sign_in_required">Sign in to view your notes.</string>
     <string name="notes_load_failed">Could not load notes. Please try again.</string>
+    <string name="your_notes">Your notes</string>
+    <plurals name="notes_count">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
+    <string name="no_notes_yet">No notes yet</string>
+    <string name="note_private">Private</string>
     <string name="untitled_note">Untitled note</string>
     <string name="note_editor_hint">Start writing…</string>
     <string name="note_editor_share">Share</string>
