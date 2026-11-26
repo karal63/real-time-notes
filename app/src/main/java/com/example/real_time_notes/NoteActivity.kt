@@ -3,19 +3,22 @@ package com.example.real_time_notes
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -23,8 +26,8 @@ class NoteActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_NOTE_ID = "noteId"
         private const val EXTRA_NOTE_TITLE = "noteTitle"
-        private const val STATE_DRAFT = "draft"
-        private const val BODY_FIELD = "editorBody"
+        private const val BODY_TEXT_FIELD = "editorBody.text"
+        private const val AUTOSAVE_DELAY_MS = 750L
 
         fun createIntent(context: Context, noteId: String, title: String): Intent =
             Intent(context, NoteActivity::class.java)
@@ -36,11 +39,11 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var editor: EditText
     private lateinit var titleView: TextView
     private lateinit var shareButton: MaterialButton
-    private lateinit var saveButton: MaterialButton
     private lateinit var loading: LinearProgressIndicator
-    private var savedBody: String? = null
-    private var pendingBody: String? = null
-    private var restoredDraft: String? = null
+    private val saveHandler = Handler(Looper.getMainLooper())
+    private val pendingSave = Runnable { saveChanges() }
+    private var lastSubmittedBody: String? = null
+    private var lastSave: Task<Void>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,31 +68,22 @@ class NoteActivity : AppCompatActivity() {
         editor = findViewById(R.id.note_editor_input)
         titleView = findViewById(R.id.note_editor_title)
         shareButton = findViewById(R.id.note_share_button)
-        saveButton = findViewById(R.id.note_save_button)
         loading = findViewById(R.id.note_editor_loading)
         setTitleText(intent.getStringExtra(EXTRA_NOTE_TITLE))
 
         shareButton.setOnClickListener { showShareDialog() }
-        saveButton.setOnClickListener { saveNote() }
-        editor.doAfterTextChanged { updateSaveButton() }
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() = closeEditor()
-        })
-        findViewById<View>(R.id.note_back_button).setOnClickListener { closeEditor() }
+        editor.doAfterTextChanged {
+            if (editor.isEnabled) scheduleSave()
+        }
+        findViewById<View>(R.id.note_back_button).setOnClickListener { finish() }
 
-        restoredDraft = savedInstanceState?.getCharSequence(STATE_DRAFT)?.toString()
         loadNote()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        val body = currentBody()
-        val draft = if (savedBody != null && body != savedBody) {
-            body
-        } else {
-            restoredDraft
-        }
-        outState.putString(STATE_DRAFT, draft)
+    override fun onStop() {
+        super.onStop()
+        saveHandler.removeCallbacks(pendingSave)
+        saveChanges()
     }
 
     private fun setTitleText(title: String?) {
@@ -116,58 +110,37 @@ class NoteActivity : AppCompatActivity() {
                 MaterialAlertDialogBuilder(this)
                     .setMessage(R.string.note_editor_load_failed)
                     .setPositiveButton(R.string.note_editor_retry) { _, _ -> loadNote() }
-                    .setNegativeButton(R.string.back_button) { _, _ -> closeEditor() }
-                    .setOnCancelListener { closeEditor() }
+                    .setNegativeButton(R.string.back_button) { _, _ -> finish() }
+                    .setOnCancelListener { finish() }
                     .show()
                 return@addOnCompleteListener
             }
 
             setTitleText(snapshot.getString("title"))
-            val body = (snapshot.get("$BODY_FIELD.text") as? String).orEmpty()
-            savedBody = body
-            editor.setText(restoredDraft ?: body)
-            restoredDraft = null
+            val body = (snapshot.get(BODY_TEXT_FIELD) as? String).orEmpty()
+            lastSubmittedBody = body
+            editor.setText(body)
             editor.isEnabled = true
-
-            val isPublic = snapshot.getBoolean("isPublic") ?: false
-            shareButton.isEnabled = isPublic
-            shareButton.isVisible = isPublic
-            updateSaveButton()
+            shareButton.isVisible = snapshot.getBoolean("isPublic") == true
         }
     }
 
-    private fun currentBody() = editor.text.toString()
-
-    private fun updateSaveButton() {
-        saveButton.isEnabled = savedBody != null && pendingBody == null && currentBody() != savedBody
+    private fun scheduleSave() {
+        saveHandler.removeCallbacks(pendingSave)
+        saveHandler.postDelayed(pendingSave, AUTOSAVE_DELAY_MS)
     }
 
-    private fun saveNote() {
-        val body = currentBody()
-        pendingBody = body
-        updateSaveButton()
-        document.update(BODY_FIELD, mapOf("text" to body)).addOnCompleteListener { task ->
-            if (isFinishing || isDestroyed) return@addOnCompleteListener
-            if (task.isSuccessful) savedBody = body
-            pendingBody = null
-            updateSaveButton()
-            val message = if (task.isSuccessful) R.string.note_editor_saved else R.string.note_save_failed
-            Snackbar.make(editor, message, Snackbar.LENGTH_SHORT).show()
-        }
-    }
+    private fun saveChanges() {
+        val previousBody = lastSubmittedBody ?: return
+        val body = editor.text.toString()
+        if (body == previousBody && lastSave?.exception == null) return
 
-    private fun closeEditor() {
-        val lastSubmittedBody = pendingBody ?: savedBody
-        val hasUnsavedChanges = restoredDraft != null ||
-            (lastSubmittedBody != null && currentBody() != lastSubmittedBody)
-        if (!hasUnsavedChanges) {
-            finish()
-            return
+        // Firestore queues newer edits even while earlier writes are waiting for a connection.
+        lastSubmittedBody = body
+        val context = applicationContext
+        lastSave = document.update(BODY_TEXT_FIELD, body).addOnFailureListener { error ->
+            Log.e("NoteActivity", "Failed to autosave note", error)
+            Toast.makeText(context, R.string.note_save_failed, Toast.LENGTH_LONG).show()
         }
-        MaterialAlertDialogBuilder(this)
-            .setMessage(R.string.note_editor_unsaved)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.note_editor_discard) { _, _ -> finish() }
-            .show()
     }
 }

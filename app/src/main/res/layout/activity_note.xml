@@ -42,22 +42,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/note_share_button"
-            style="?attr/borderlessButtonStyle"
+            style="@style/Widget.Realtimenotes.ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:enabled="false"
-            android:minHeight="48dp"
             android:text="@string/note_editor_share"
-            android:visibility="gone" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/note_save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:minHeight="48dp"
-            android:text="@string/note_editor_save" />
+            android:visibility="gone"
+            app:icon="@drawable/ic_note_share_24"
+            tools:visibility="visible" />
     </LinearLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator

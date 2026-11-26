@@ -24,22 +24,39 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/welcome_text"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:accessibilityHeading="true"
-                android:textAppearance="@style/TextAppearance.Realtimenotes.Heading"
-                tools:text="Welcome Guest 4821" />
+                android:orientation="vertical">
 
-            <Button
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/welcome"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/account_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="middle"
+                    android:maxLines="1"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="alex@example.com" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/join_button"
-                style="?attr/materialButtonOutlinedStyle"
+                style="@style/Widget.Realtimenotes.ToolbarButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/join" />
+                android:text="@string/join"
+                app:icon="@drawable/ic_note_join_24" />
         </LinearLayout>
 
         <ScrollView

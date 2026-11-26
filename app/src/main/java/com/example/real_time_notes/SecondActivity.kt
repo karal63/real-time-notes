@@ -42,8 +42,8 @@ class SecondActivity : AppCompatActivity() {
             insets
         }
 
-        val guestName = intent.getStringExtra(EXTRA_GUEST_NAME) ?: getString(R.string.default_guest_name)
-        findViewById<TextView>(R.id.welcome_text).text = getString(R.string.welcome_guest, guestName)
+        val accountName = intent.getStringExtra(EXTRA_GUEST_NAME) ?: getString(R.string.default_guest_name)
+        findViewById<TextView>(R.id.account_name).text = accountName
 
         findViewById<FloatingActionButton>(R.id.add_note_button).setOnClickListener {
             val intent = Intent(this, CreateNoteActivity::class.java)
