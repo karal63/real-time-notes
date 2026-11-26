@@ -45,6 +45,10 @@
     <string name="notes_load_failed">Could not load notes. Please try again.</string>
     <string name="untitled_note">Untitled note</string>
     <string name="note_editor_hint">Start writing…</string>
+    <string name="note_editor_share">Share</string>
+    <string name="note_share_title">Share note</string>
+    <string name="note_share_message">Group join code for “%1$s”</string>
+    <string name="note_share_preview_code" translatable="false">R7X4K9M2</string>
     <string name="note_editor_save">Save</string>
     <string name="note_editor_saved">Note saved</string>
     <string name="note_editor_load_failed">Could not open this note.</string>

@@ -2,6 +2,7 @@ package com.example.real_time_notes
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.EditText
@@ -31,13 +32,13 @@ class CreateNoteActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        findViewById<Button>(R.id.create_note_back_button).setOnClickListener {
+        findViewById<View>(R.id.create_note_back_button).setOnClickListener {
             finish()
         }
 
         val titleField = findViewById<EditText>(R.id.note_name_input)
         val descriptionField = findViewById<EditText>(R.id.note_description_input)
-        val allowOthersField = findViewById<CompoundButton>(R.id.allow_others_switch)
+        val publicField = findViewById<CompoundButton>(R.id.allow_others_switch)
         val createButton = findViewById<Button>(R.id.create_note_button)
 
         createButton.setOnClickListener {
@@ -49,13 +50,13 @@ class CreateNoteActivity : AppCompatActivity() {
             }
 
             val description = descriptionField.text.toString().trim()
-            val allowOthers = allowOthersField.isChecked
+            val isPublic = publicField.isChecked
             val ownerId = auth.currentUser?.uid
 
             val note = hashMapOf(
                 "title" to title,
                 "description" to description,
-                "allowOthers" to allowOthers,
+                "isPublic" to isPublic,
                 "ownerId" to ownerId,
                 "createdAt" to FieldValue.serverTimestamp()
             )

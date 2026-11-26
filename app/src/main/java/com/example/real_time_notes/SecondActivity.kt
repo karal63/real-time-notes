@@ -109,7 +109,7 @@ class SecondActivity : AppCompatActivity() {
                         id = document.id,
                         title = document.getString("title").orEmpty(),
                         description = document.getString("description").orEmpty(),
-                        allowOthers = document.getBoolean("allowOthers") ?: false,
+                        isPublic = document.getBoolean("isPublic") ?: false,
                         ownerId = document.getString("ownerId").orEmpty()
                     )
                 })

@@ -4,6 +4,6 @@ data class Note(
     val id: String,
     val title: String,
     val description: String,
-    val allowOthers: Boolean,
+    val isPublic: Boolean,
     val ownerId: String
 )

@@ -35,6 +35,7 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var document: DocumentReference
     private lateinit var editor: EditText
     private lateinit var titleView: TextView
+    private lateinit var shareButton: MaterialButton
     private lateinit var saveButton: MaterialButton
     private lateinit var loading: LinearProgressIndicator
     private var savedBody: String? = null
@@ -63,10 +64,12 @@ class NoteActivity : AppCompatActivity() {
         document = FirebaseFirestore.getInstance().collection("notes").document(noteId)
         editor = findViewById(R.id.note_editor_input)
         titleView = findViewById(R.id.note_editor_title)
+        shareButton = findViewById(R.id.note_share_button)
         saveButton = findViewById(R.id.note_save_button)
         loading = findViewById(R.id.note_editor_loading)
         setTitleText(intent.getStringExtra(EXTRA_NOTE_TITLE))
 
+        shareButton.setOnClickListener { showShareDialog() }
         saveButton.setOnClickListener { saveNote() }
         editor.doAfterTextChanged { updateSaveButton() }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -94,6 +97,15 @@ class NoteActivity : AppCompatActivity() {
         setTitle(titleView.text)
     }
 
+    private fun showShareDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.note_share_title)
+            .setMessage(getString(R.string.note_share_message, titleView.text))
+            .setView(R.layout.dialog_share_note)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
     private fun loadNote() {
         loading.isVisible = true
         document.get().addOnCompleteListener { task ->
@@ -116,6 +128,10 @@ class NoteActivity : AppCompatActivity() {
             editor.setText(restoredDraft ?: body)
             restoredDraft = null
             editor.isEnabled = true
+
+            val isPublic = snapshot.getBoolean("isPublic") ?: false
+            shareButton.isEnabled = isPublic
+            shareButton.isVisible = isPublic
             updateSaveButton()
         }
     }
