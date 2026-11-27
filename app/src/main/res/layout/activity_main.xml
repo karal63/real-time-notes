@@ -10,27 +10,29 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="28dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="400dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/logo_letter"
-            android:textSize="72sp"
-            android:textStyle="italic" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="24dp"
+            android:importantForAccessibility="no"
+            app:srcCompat="@drawable/ic_notes_mark" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
+            android:accessibilityHeading="true"
             android:text="@string/app_title"
-            android:textSize="22sp" />
+            android:textAppearance="@style/TextAppearance.Realtimenotes.Heading"
+            android:textSize="38sp" />
 
         <Button
             android:id="@+id/login_button"
@@ -40,10 +42,11 @@
 
         <Button
             android:id="@+id/create_account_button"
+            style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create_account"
-            app:rippleColor="#2C2828" />
+            android:layout_marginTop="8dp"
+            android:text="@string/create_account" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

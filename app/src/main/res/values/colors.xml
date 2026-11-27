@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="notes_background">#0A0D0B</color>
+    <color name="notes_surface">#1A231B</color>
+    <color name="notes_surface_raised">#232E24</color>
+    <color name="notes_text">#EDF4E9</color>
+    <color name="notes_text_secondary">#B7C6B4</color>
+    <color name="notes_accent">#AAEF79</color>
+    <color name="notes_on_accent">#17320D</color>
+    <color name="notes_accent_container">#2B4327</color>
+    <color name="notes_on_accent_container">#D0F5BB</color>
+    <color name="notes_outline">#7F917D</color>
+    <color name="notes_outline_subtle">#364536</color>
+    <color name="notes_selection">#55AAEF79</color>
 </resources>

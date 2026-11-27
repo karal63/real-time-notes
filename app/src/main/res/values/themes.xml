@@ -1,9 +1,30 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Realtimenotes" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <style name="Theme.Realtimenotes" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:colorBackground">@color/notes_background</item>
+        <item name="android:windowBackground">@color/notes_background</item>
+        <item name="android:textColorHighlight">@color/notes_selection</item>
+        <item name="colorSurface">@color/notes_surface</item>
+        <item name="colorSurfaceVariant">@color/notes_surface_raised</item>
+        <item name="colorSurfaceContainer">@color/notes_surface</item>
+        <item name="colorSurfaceContainerLow">@color/notes_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/notes_surface_raised</item>
+        <item name="colorSurfaceContainerHighest">@color/notes_surface_raised</item>
+        <item name="colorSurfaceInverse">@color/notes_text</item>
+        <item name="colorOnSurfaceInverse">@color/notes_background</item>
+        <item name="colorOnSurface">@color/notes_text</item>
+        <item name="colorOnSurfaceVariant">@color/notes_text_secondary</item>
+        <item name="colorOnBackground">@color/notes_text</item>
+        <item name="colorPrimary">@color/notes_accent</item>
+        <item name="colorOnPrimary">@color/notes_on_accent</item>
+        <item name="colorPrimaryInverse">@color/notes_accent_container</item>
+        <item name="colorPrimaryContainer">@color/notes_accent_container</item>
+        <item name="colorOnPrimaryContainer">@color/notes_on_accent_container</item>
+        <item name="colorSecondary">@color/notes_on_accent_container</item>
+        <item name="colorOnSecondary">@color/notes_on_accent</item>
+        <item name="colorSecondaryContainer">@color/notes_accent_container</item>
+        <item name="colorOnSecondaryContainer">@color/notes_on_accent_container</item>
+        <item name="colorOutline">@color/notes_outline</item>
+        <item name="colorOutlineVariant">@color/notes_outline_subtle</item>
+        <item name="textInputOutlinedStyle">@style/Widget.Realtimenotes.TextInput</item>
     </style>
-
-    <style name="Theme.Realtimenotes" parent="Base.Theme.Realtimenotes" />
 </resources>

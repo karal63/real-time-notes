@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">real-time-notes</string>
     <string name="app_title">Real time notes</string>
-    <string name="logo_letter">N</string>
     <string name="log_in">Log in</string>
     <string name="sign_in_title">Sign in</string>
     <string name="sign_up_title">Sign up</string>
@@ -24,7 +23,7 @@
     <string name="coming_later">Coming later</string>
     <string name="guest_name">Guest %1$d</string>
     <string name="default_guest_name">Guest</string>
-    <string name="welcome_guest">Welcome %1$s</string>
+    <string name="welcome">Welcome</string>
     <string name="join">Join</string>
     <string name="join_note_title">Join a note</string>
     <string name="join_note_message">Enter the code for the note you want to join.</string>
@@ -44,14 +43,21 @@
     <string name="note_save_unavailable">Firestore is unavailable. Check your connection and try again.</string>
     <string name="sign_in_required">Sign in to view your notes.</string>
     <string name="notes_load_failed">Could not load notes. Please try again.</string>
+    <string name="your_notes">Your notes</string>
+    <plurals name="notes_count">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
+    <string name="no_notes_yet">No notes yet</string>
+    <string name="note_private">Private</string>
     <string name="untitled_note">Untitled note</string>
     <string name="note_editor_hint">Start writing…</string>
-    <string name="note_editor_save">Save</string>
-    <string name="note_editor_saved">Note saved</string>
+    <string name="note_editor_share">Share</string>
+    <string name="note_share_title">Share note</string>
+    <string name="note_share_message">Group join code for “%1$s”</string>
+    <string name="note_share_preview_code" translatable="false">R7X4K9M2</string>
     <string name="note_editor_load_failed">Could not open this note.</string>
     <string name="note_editor_retry">Retry</string>
-    <string name="note_editor_unsaved">Discard unsaved changes?</string>
-    <string name="note_editor_discard">Discard</string>
     <string name="sample_note_one">Note 1</string>
     <string name="sample_description_one">Ideas for the project</string>
     <string name="sample_note_two">Note 2</string>
